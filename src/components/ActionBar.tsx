@@ -14,7 +14,14 @@ function goToRow(requirementId: string) {
 }
 
 /** Always-visible summary: what still blocks the package, then Generate and Download. */
-export function ActionBar({ tender, rows }: { tender: Tender; rows: Row[] }) {
+interface Props {
+  tender: Tender;
+  rows: Row[];
+  /** Nothing matched yet: show how to begin instead of a list of everything missing. */
+  pristine: boolean;
+}
+
+export function ActionBar({ tender, rows, pristine }: Props) {
   const { t, lang } = useI18n();
   const { state, generate } = usePackage(tender, rows);
 
@@ -43,6 +50,8 @@ export function ActionBar({ tender, rows }: { tender: Tender; rows: Row[] }) {
             <p className="actionbar__detail actionbar__detail--error" role="alert">
               {state.fileName ? t('bar.error', { file: state.fileName }) : t('bar.errorGeneric')}
             </p>
+          ) : pristine ? (
+            <p className="actionbar__detail">{t('bar.begin')}</p>
           ) : blockers.length > 0 ? (
             <div className="actionbar__detail">
               <span>{t('bar.fix')}</span>

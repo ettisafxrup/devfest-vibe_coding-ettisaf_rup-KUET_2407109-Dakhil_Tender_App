@@ -1,19 +1,22 @@
 import { useI18n } from '../i18n';
 import type { StringKey } from '../i18n/strings';
+import { hrefOf } from '../lib/router';
+import type { Tender } from '../types';
 import { DropZone } from './DropZone';
 
-export type StartError = 'json' | 'shape' | 'none' | 'sample';
+export type StartError = 'json' | 'shape' | 'none';
 
 interface Props {
   onFiles: (files: File[]) => void;
-  onSample: () => void;
   error: StartError | null;
   busy: boolean;
+  /** A tender the user already opened, so going home never strands their work. */
+  resume: Tender | null;
 }
 
 const STEPS: StringKey[] = ['start.step1', 'start.step2', 'start.step3'];
 
-export function StartScreen({ onFiles, onSample, error, busy }: Props) {
+export function StartScreen({ onFiles, error, busy, resume }: Props) {
   const { t } = useI18n();
   return (
     <section className="start" aria-labelledby="start-title">
@@ -21,6 +24,14 @@ export function StartScreen({ onFiles, onSample, error, busy }: Props) {
         {t('start.title')}
       </h1>
       <p className="start__lead">{t('start.lead')}</p>
+
+      {resume && (
+        <a className="resume" href={hrefOf('tender')}>
+          <span className="resume__label">{t('start.resume')}</span>
+          <span className="resume__title">{resume.title}</span>
+          <span className="resume__id mono">{resume.tender_id}</span>
+        </a>
+      )}
 
       <DropZone
         size="large"
@@ -31,9 +42,9 @@ export function StartScreen({ onFiles, onSample, error, busy }: Props) {
         onFiles={onFiles}
         busy={busy}
       >
-        <button type="button" className="btn btn--ghost" disabled={busy} onClick={onSample}>
+        <a className="btn btn--ghost" href={hrefOf('sample')}>
           {t('start.sample')}
-        </button>
+        </a>
       </DropZone>
 
       {error && (

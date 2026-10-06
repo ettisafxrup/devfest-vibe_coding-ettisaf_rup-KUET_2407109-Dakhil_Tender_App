@@ -5,6 +5,18 @@ export const en = {
   'app.skip': 'Skip to content',
   'app.privacy': 'Your files stay in this browser. Nothing is uploaded.',
   'lang.label': 'Language',
+  'nav.label': 'Main',
+  'nav.home': 'Home',
+  'nav.tender': 'Your tender',
+  'nav.sample': 'Sample tender',
+  'start.resume': 'Continue where you left off',
+  'sample.loading': 'Opening the sample tender…',
+  'sample.retry': 'Try again',
+  'sample.home': 'Back to home',
+  'sample.note':
+    'This is the contest sample pack. Some of its files have problems on purpose. Match each file to its document and see what the checklist catches.',
+  'status.select': 'Select a file',
+  'bar.begin': 'Choose a file for each required document. Anything that needs fixing will be listed here.',
 
   'start.title': 'Build a tender package you can trust.',
   'start.lead':
@@ -98,6 +110,18 @@ export const bn: Record<StringKey, string> = {
   'app.skip': 'মূল অংশে যান',
   'app.privacy': 'আপনার ফাইল এই ব্রাউজারেই থাকে। কোথাও আপলোড হয় না।',
   'lang.label': 'ভাষা',
+  'nav.label': 'প্রধান মেনু',
+  'nav.home': 'হোম',
+  'nav.tender': 'আপনার টেন্ডার',
+  'nav.sample': 'নমুনা টেন্ডার',
+  'start.resume': 'যেখানে ছিলেন সেখান থেকে চালিয়ে যান',
+  'sample.loading': 'নমুনা টেন্ডার খোলা হচ্ছে…',
+  'sample.retry': 'আবার চেষ্টা করুন',
+  'sample.home': 'হোমে ফিরুন',
+  'sample.note':
+    'এটি প্রতিযোগিতার নমুনা প্যাক। এর কয়েকটি ফাইলে ইচ্ছে করেই সমস্যা রাখা আছে। প্রতিটি ফাইল তার কাগজের সাথে মিলিয়ে দেখুন, তালিকায় কী ধরা পড়ে।',
+  'status.select': 'ফাইল বাছুন',
+  'bar.begin': 'প্রতিটি আবশ্যিক কাগজের জন্য একটি ফাইল বাছুন। কিছু ঠিক করার থাকলে এখানে দেখা যাবে।',
 
   'start.title': 'নির্ভুল টেন্ডার প্যাকেজ তৈরি করুন।',
   'start.lead':

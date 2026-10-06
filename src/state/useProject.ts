@@ -132,7 +132,9 @@ export function useProject() {
       const twin = state.files.find((f) => f.id !== file.id && f.hash === file.hash);
       if (twin) duplicateOf.set(file.id, twin);
     }
-    return { rows, placement, duplicateOf };
+    /** Nothing matched yet: empty slots are an invitation, not yet a problem to report. */
+    const pristine = placement.size === 0;
+    return { rows, placement, duplicateOf, pristine };
   }, [state.requirements, state.files, state.matches, state.expiry, state.tender]);
 
   const loadTender = useCallback((tender: Tender, requirements: Requirement[]) => {

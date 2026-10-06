@@ -119,7 +119,7 @@ export function LedgerRow({ row, project }: Props) {
       </div>
 
       <div className="row__side">
-        <StatusTag status={status} />
+        <StatusTag status={status} prompt={project.pristine} />
         {row.startPage !== null && row.endPage !== null && (
           <span className="row__pages mono">
             {row.startPage === row.endPage

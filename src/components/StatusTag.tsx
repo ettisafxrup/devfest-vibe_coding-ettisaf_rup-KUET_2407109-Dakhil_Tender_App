@@ -20,8 +20,17 @@ const glyphs: Record<Status, JSX.Element> = {
   notProvided: <path d="M3.5 7h7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />,
 };
 
-export function StatusTag({ status }: { status: Status }) {
+interface Props {
+  status: Status;
+  /** Before the user has matched anything, a missing document reads as a prompt, not an error. */
+  prompt?: boolean;
+}
+
+export function StatusTag({ status, prompt }: Props) {
   const { t } = useI18n();
+  if (prompt && status === 'missing') {
+    return <span className="status status--prompt">{t('status.select')}</span>;
+  }
   return (
     <span className={`status status--${status}`}>
       <svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true" focusable="false">
