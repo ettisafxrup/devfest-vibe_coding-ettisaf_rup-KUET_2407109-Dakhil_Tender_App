@@ -1,0 +1,69 @@
+:root {
+  /* Surfaces */
+  --paper: #f6f4ef;
+  --surface: #ffffff;
+  --sunken: #efece5;
+  --line: #e3dfd6;
+  --line-strong: #cfc9bc;
+
+  /* Ink */
+  --ink: #1b1a17;
+  --ink-2: #5c584f;
+  --ink-3: #7a756b;
+
+  /* The one accent: rubber-stamp blue */
+  --seal: #24389c;
+  --seal-hover: #1c2c7d;
+  --seal-tint: #e9ecf8;
+
+  /* Status: only on tags and inline messages */
+  --ok: #1f7a4d;
+  --ok-tint: #e6f3ec;
+  --danger: #b42318;
+  --danger-tint: #fbeae7;
+  --warn: #9a5b00;
+  --warn-tint: #fbf1dc;
+
+  /* Type */
+  --font-ui: 'Instrument Sans', 'Hind Siliguri', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --text-display: 600 1.875rem/1.2 var(--font-ui);
+  --text-title: 600 1.375rem/1.27 var(--font-ui);
+  --text-heading: 600 1.0625rem/1.4 var(--font-ui);
+  --text-body: 400 0.9375rem/1.47 var(--font-ui);
+  --text-small: 400 0.8125rem/1.4 var(--font-ui);
+
+  /* Spacing (4px base) */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+
+  /* Radius */
+  --r-sheet: 2px;
+  --r-tag: 4px;
+  --r-control: 6px;
+  --r-panel: 10px;
+
+  /* Elevation: borders do most of the work */
+  --shadow-raised: 0 1px 2px rgba(27, 26, 23, 0.06), 0 8px 24px -6px rgba(27, 26, 23, 0.14);
+
+  /* Motion */
+  --fast: 120ms;
+  --base: 200ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --topbar-h: 56px;
+  --page-max: 1200px;
+  --gutter: 32px;
+}
+
+@media (max-width: 719px) {
+  :root {
+    --gutter: 16px;
+  }
+}
