@@ -1,0 +1,3 @@
+# Clean URLs: any path that is not a real file is served by the app,
+# so /sample and /tender work on a direct visit or a refresh.
+/*    /index.html   200

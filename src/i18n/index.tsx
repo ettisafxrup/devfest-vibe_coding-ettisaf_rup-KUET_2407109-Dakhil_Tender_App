@@ -1,11 +1,14 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Lang } from '../types';
 import { bn, en, type StringKey } from './strings';
 
 type Vars = Record<string, string | number>;
 
 interface I18n {
+  /** The language the page is showing right now. */
   lang: Lang;
+  /** The language the user picked; leads `lang` by the length of the cross-fade. */
+  choice: Lang;
   setLang: (lang: Lang) => void;
   t: (key: StringKey, vars?: Vars) => string;
   /** "20 Oct 2026" style; Western digits in both languages so dates match the PDF. */
@@ -13,6 +16,8 @@ interface I18n {
 }
 
 const STORAGE_KEY = 'dakhil.lang';
+/** How long the page takes to fade out before the words change (matches the CSS). */
+const FADE_MS = 150;
 const dictionaries: Record<Lang, Record<StringKey, string>> = { en, bn };
 const I18nContext = createContext<I18n | null>(null);
 
@@ -26,6 +31,8 @@ function storedLang(): Lang {
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(storedLang);
+  const [choice, setChoice] = useState<Lang>(lang);
+  const fade = useRef(0);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -33,13 +40,35 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
-    setLangState(next);
+    setChoice(next);
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // Storage unavailable: the choice just lasts for this visit.
     }
+
+    // Fade the page out, swap the words while nothing is visible, fade back in.
+    const root = document.documentElement;
+    window.clearTimeout(fade.current);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setLangState(next);
+      return;
+    }
+    root.classList.add('lang-fading');
+    fade.current = window.setTimeout(() => {
+      setLangState(next);
+      // Two frames: one for the new text to be laid out, one to start the fade-in from it.
+      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('lang-fading')));
+    }, FADE_MS);
   }, []);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(fade.current);
+      document.documentElement.classList.remove('lang-fading');
+    },
+    [],
+  );
 
   const value = useMemo<I18n>(() => {
     const dateFormat = new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD-u-nu-latn' : 'en-GB', {
@@ -50,6 +79,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     });
     return {
       lang,
+      choice,
       setLang,
       t: (key, vars) =>
         dictionaries[lang][key].replace(/\{(\w+)\}/g, (match, name) =>
@@ -61,7 +91,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         return Number.isNaN(date.getTime()) ? iso : dateFormat.format(date);
       },
     };
-  }, [lang, setLang]);
+  }, [lang, choice, setLang]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

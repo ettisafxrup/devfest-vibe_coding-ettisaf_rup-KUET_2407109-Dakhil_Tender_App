@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react';
 import { useI18n } from '../i18n';
 import { entriesFromRows, totalPages } from '../lib/package';
 import { isBlocking, rowDomId, titleOf } from '../lib/status';
@@ -31,8 +32,24 @@ export function ActionBar({ tender, rows, pristine }: Props) {
   const pages = totalPages(entriesFromRows(rows));
   const building = state.phase === 'building';
 
+  // Other parts of the layout (the files panel, scroll padding) need to know how tall this bar is.
+  const bar = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const element = bar.current;
+    if (!element) return;
+    const root = document.documentElement;
+    const publish = () => root.style.setProperty('--actionbar-h', `${Math.ceil(element.getBoundingClientRect().height)}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--actionbar-h');
+    };
+  }, []);
+
   return (
-    <footer className="actionbar">
+    <footer ref={bar} className="actionbar">
       <div className="actionbar__inner">
         <div className="actionbar__summary" aria-live="polite">
           {state.phase === 'done' ? (
@@ -42,7 +59,9 @@ export function ActionBar({ tender, rows, pristine }: Props) {
             </p>
           ) : (
             <p className="actionbar__headline">
-              {t('bar.progress', { done: ready, total: required.length })}
+              {required.length > 0
+                ? t('bar.progress', { done: ready, total: required.length })
+                : t('bar.optionalOnly')}
             </p>
           )}
 
@@ -50,7 +69,7 @@ export function ActionBar({ tender, rows, pristine }: Props) {
             <p className="actionbar__detail actionbar__detail--error" role="alert">
               {state.fileName ? t('bar.error', { file: state.fileName }) : t('bar.errorGeneric')}
             </p>
-          ) : pristine ? (
+          ) : pristine && blockers.length > 0 ? (
             <p className="actionbar__detail">{t('bar.begin')}</p>
           ) : blockers.length > 0 ? (
             <div className="actionbar__detail">

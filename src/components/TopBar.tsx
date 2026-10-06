@@ -15,7 +15,7 @@ const NAV_LABELS: Record<Route, StringKey> = {
 };
 
 function LanguageToggle() {
-  const { lang, setLang, t } = useI18n();
+  const { choice, setLang, t } = useI18n();
   return (
     <div className="segmented" role="group" aria-label={t('lang.label')}>
       {LANGUAGES.map(({ code, label }) => (
@@ -24,7 +24,7 @@ function LanguageToggle() {
           type="button"
           lang={code}
           className="segmented__option"
-          aria-pressed={lang === code}
+          aria-pressed={choice === code}
           onClick={() => setLang(code)}
         >
           {label}

@@ -3,28 +3,50 @@ import type { Requirement, Tender } from '../types';
 export type RequirementsErrorCode = 'json' | 'shape';
 
 export class RequirementsError extends Error {
-  constructor(public code: RequirementsErrorCode) {
+  code: RequirementsErrorCode;
+  constructor(code: RequirementsErrorCode) {
     super(code);
+    this.code = code;
   }
 }
 
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const BYTE_ORDER_MARK = 0xfeff;
 
 const text = (value: unknown): string =>
   typeof value === 'string' ? value.trim() : typeof value === 'number' ? String(value) : '';
+
+const flag = (value: unknown): boolean =>
+  value === true || value === 1 || (typeof value === 'string' && /^(true|yes|1)$/i.test(value.trim()));
+
+/** A real calendar date in YYYY-MM-DD form (a trailing time part is tolerated), else ''. */
+export function isoDate(value: unknown): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:[T ].*)?$/.exec(text(value));
+  if (!match) return '';
+  const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const date = new Date(Date.UTC(year, month - 1, day));
+  date.setUTCFullYear(year); // Date.UTC treats years 0-99 as 1900-1999
+  const real = date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+  return real ? `${match[1]}-${match[2]}-${match[3]}` : '';
+}
+
+function orderOf(value: unknown): number {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string' && value.trim() !== '') return Number(value);
+  return NaN;
+}
 
 /** Parses and validates requirements.json; requirements come back sorted by `order`. */
 export function parseRequirements(raw: string): { tender: Tender; requirements: Requirement[] } {
   let data: any;
   try {
-    data = JSON.parse(raw.replace(/^﻿/, ''));
+    data = JSON.parse(raw.charCodeAt(0) === BYTE_ORDER_MARK ? raw.slice(1) : raw);
   } catch {
     throw new RequirementsError('json');
   }
 
   const t = data?.tender;
   const list = data?.requirements;
-  if (!t || typeof t !== 'object' || !Array.isArray(list) || list.length === 0) {
+  if (!t || typeof t !== 'object' || Array.isArray(t) || !Array.isArray(list) || list.length === 0) {
     throw new RequirementsError('shape');
   }
 
@@ -33,29 +55,29 @@ export function parseRequirements(raw: string): { tender: Tender; requirements: 
     title: text(t.title),
     procuring_entity: text(t.procuring_entity),
     bidder: text(t.bidder),
-    submission_deadline: text(t.submission_deadline),
+    submission_deadline: isoDate(t.submission_deadline),
   };
-  if (!tender.tender_id || !ISO_DATE.test(tender.submission_deadline)) {
-    throw new RequirementsError('shape');
-  }
+  if (!tender.tender_id || !tender.submission_deadline) throw new RequirementsError('shape');
 
-  const seen = new Set<string>();
+  const used = new Set<string>();
   const requirements = list.map((item: any, index: number): Requirement => {
-    const order = Number(item?.order);
+    const order = orderOf(item?.order);
     const titleEn = text(item?.title_en);
     const titleBn = text(item?.title_bn);
-    const id = text(item?.id) || `R${index + 1}`;
-    if (!item || !Number.isFinite(order) || !(titleEn || titleBn) || seen.has(id)) {
+    if (!item || typeof item !== 'object' || !Number.isFinite(order) || !(titleEn || titleBn)) {
       throw new RequirementsError('shape');
     }
-    seen.add(id);
+    // Ids key everything else, so a missing or repeated one gets a unique stand-in.
+    let id = text(item.id) || `R${index + 1}`;
+    for (let n = 2; used.has(id); n++) id = `${text(item.id) || `R${index + 1}`}-${n}`;
+    used.add(id);
     return {
       id,
       order,
       title_en: titleEn || titleBn,
       title_bn: titleBn || titleEn,
-      mandatory: item.mandatory === true,
-      has_expiry: item.has_expiry === true,
+      mandatory: flag(item.mandatory),
+      has_expiry: flag(item.has_expiry),
     };
   });
 

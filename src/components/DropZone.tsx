@@ -1,5 +1,5 @@
 import { useRef, useState, type DragEvent, type ReactNode } from 'react';
-import { carriesDesktopFiles, cx } from '../lib/dnd';
+import { carriesDesktopFiles, collectDroppedFiles, cx } from '../lib/dnd';
 import { Icon } from './Icon';
 
 interface Props {
@@ -32,7 +32,7 @@ export function DropZone({ title, hint, buttonLabel, accept, onFiles, size = 'co
     event.preventDefault();
     event.stopPropagation();
     setOver(false);
-    onFiles(Array.from(event.dataTransfer.files));
+    void collectDroppedFiles(event.dataTransfer).then(onFiles);
   };
 
   return (

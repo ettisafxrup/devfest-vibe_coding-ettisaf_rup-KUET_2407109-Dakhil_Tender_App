@@ -26,7 +26,7 @@ export interface UploadedFile {
   bytes: Uint8Array;
 }
 
-export type RejectReason = 'notPdf' | 'damaged' | 'locked' | 'tooMany' | 'tooLarge';
+export type RejectReason = 'notPdf' | 'damaged' | 'locked' | 'unreadable' | 'tooMany' | 'tooLarge';
 
 export interface Rejection {
   id: string;

@@ -7,6 +7,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-padding-top: calc(var(--topbar-h) + var(--s4));
+  /* Keeps focused controls clear of the sticky action bar. */
+  scroll-padding-bottom: calc(var(--actionbar-h, 0px) + var(--s4));
 }
 
 /* Bangla glyphs are shorter and need more leading than Latin at the same size. */

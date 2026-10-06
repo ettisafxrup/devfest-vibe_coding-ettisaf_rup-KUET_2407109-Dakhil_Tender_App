@@ -1,16 +1,30 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
+import { flushSync } from 'react-dom';
+import { CursorFollower } from './components/CursorFollower';
 import { SampleGate } from './components/SampleGate';
+import { SiteFooter } from './components/SiteFooter';
 import { StartScreen, type StartError } from './components/StartScreen';
 import { TopBar } from './components/TopBar';
 import { Workspace } from './components/Workspace';
 import { useI18n } from './i18n';
-import { carriesDesktopFiles } from './lib/dnd';
+import { carriesDesktopFiles, collectDroppedFiles } from './lib/dnd';
 import { RequirementsError, parseRequirements } from './lib/requirements';
-import { navigate, useRoute } from './lib/router';
+import { handleLinkClick, navigate, useRoute } from './lib/router';
 import { loadSamplePack } from './lib/sample';
 import { useProject } from './state/useProject';
+import type { Requirement, Tender } from './types';
 
 const isJson = (file: File) => /\.json$/i.test(file.name) || file.type === 'application/json';
+
+/** The requirements file among whatever was picked; one actually named requirements.json wins. */
+const findRequirementsFile = (files: File[]): File | undefined =>
+  files.find((file) => /^requirements\.json$/i.test(file.name)) ?? files.find(isJson);
+
+interface PendingOpen {
+  tender: Tender;
+  requirements: Requirement[];
+  files: File[];
+}
 
 export default function App() {
   const { t } = useI18n();
@@ -22,17 +36,29 @@ export default function App() {
 
   const [startError, setStartError] = useState<StartError | null>(null);
   const [busy, setBusy] = useState(false);
+  const [pendingOpen, setPendingOpen] = useState<PendingOpen | null>(null);
   const [sampleStatus, setSampleStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const sampleRequested = useRef(false);
 
   const { tender: ownTender, loadTender: loadOwn, addFiles: addOwnFiles, reset: resetOwn } = own;
   const { tender: sampleTender, loadTender: loadSample, addFiles: addSampleFiles, reset: resetSample } = sample;
+  const ownHasWork = own.files.length > 0 || own.pending.length > 0;
+
+  const commitOpen = useCallback(
+    ({ tender, requirements, files }: PendingOpen) => {
+      // The tender must be in place before the URL changes, or "/tender" would find nothing and bounce home.
+      flushSync(() => loadOwn(tender, requirements));
+      void addOwnFiles(files);
+      navigate('tender');
+    },
+    [loadOwn, addOwnFiles],
+  );
 
   /** Opens a tender from whatever was picked: requirements.json, optionally with PDFs alongside. */
   const openTender = useCallback(
     async (incoming: File[]) => {
       if (incoming.length === 0) return;
-      const requirementsFile = incoming.find(isJson);
+      const requirementsFile = findRequirementsFile(incoming);
       if (!requirementsFile) {
         setStartError('none');
         return;
@@ -40,18 +66,25 @@ export default function App() {
       setBusy(true);
       try {
         const parsed = parseRequirements(await requirementsFile.text());
+        const next = { ...parsed, files: incoming.filter((file) => file !== requirementsFile) };
         setStartError(null);
-        loadOwn(parsed.tender, parsed.requirements);
-        void addOwnFiles(incoming.filter((file) => file !== requirementsFile));
-        navigate('tender');
+        // Never throw away loaded files without asking first.
+        if (ownHasWork) setPendingOpen(next);
+        else commitOpen(next);
       } catch (error) {
         setStartError(error instanceof RequirementsError ? error.code : 'json');
       } finally {
         setBusy(false);
       }
     },
-    [loadOwn, addOwnFiles],
+    [ownHasWork, commitOpen],
   );
+
+  const answerReplace = (confirmed: boolean) => {
+    const next = pendingOpen;
+    setPendingOpen(null);
+    if (confirmed && next) commitOpen(next);
+  };
 
   // The sample route loads its own pack, so a direct link or a refresh works too.
   useEffect(() => {
@@ -60,7 +93,7 @@ export default function App() {
     setSampleStatus('loading');
     loadSamplePack()
       .then(async (files) => {
-        const requirementsFile = files.find(isJson);
+        const requirementsFile = findRequirementsFile(files);
         if (!requirementsFile) throw new Error('Sample pack has no requirements.json');
         const parsed = parseRequirements(await requirementsFile.text());
         loadSample(parsed.tender, parsed.requirements);
@@ -87,7 +120,25 @@ export default function App() {
     }
     window.scrollTo(0, 0);
     main.current?.focus({ preventScroll: true });
+    setPendingOpen(null);
   }, [route]);
+
+  // In-app links switch pages without reloading (a reload would drop the loaded files).
+  useEffect(() => {
+    document.addEventListener('click', handleLinkClick);
+    return () => document.removeEventListener('click', handleLinkClick);
+  }, []);
+
+  // Closing or refreshing the tab would lose the user's files, so the browser asks first.
+  useEffect(() => {
+    if (!ownHasWork) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [ownHasWork]);
 
   // Files dropped anywhere on the page are handled, never opened by the browser.
   useEffect(() => {
@@ -97,10 +148,11 @@ export default function App() {
     const onDrop = (event: DragEvent) => {
       if (!carriesDesktopFiles(event)) return;
       event.preventDefault();
-      const files = Array.from(event.dataTransfer?.files ?? []);
-      if (route === 'tender' && ownTender) void addOwnFiles(files);
-      else if (route === 'sample' && sampleTender) void addSampleFiles(files);
-      else if (route === 'home') void openTender(files);
+      void collectDroppedFiles(event.dataTransfer).then((files) => {
+        if (route === 'tender' && ownTender) void addOwnFiles(files);
+        else if (route === 'sample' && sampleTender) void addSampleFiles(files);
+        else if (route === 'home') void openTender(files);
+      });
     };
     window.addEventListener('dragover', onDragOver);
     window.addEventListener('drop', onDrop);
@@ -110,7 +162,6 @@ export default function App() {
     };
   }, [route, ownTender, sampleTender, addOwnFiles, addSampleFiles, openTender]);
 
-  // A plain "#main" link would be read as a route, so the skip link moves focus itself.
   const skipToMain = (event: MouseEvent) => {
     event.preventDefault();
     main.current?.focus();
@@ -125,7 +176,16 @@ export default function App() {
       </a>
       <TopBar route={route} tenderId={shownTender?.tender_id} hasOwnTender={ownTender !== null} />
       <main id="main" ref={main} tabIndex={-1} className="app__main">
-        {route === 'home' && <StartScreen onFiles={openTender} error={startError} busy={busy} resume={ownTender} />}
+        {route === 'home' && (
+          <StartScreen
+            onFiles={openTender}
+            error={startError}
+            busy={busy}
+            resume={ownTender}
+            replacing={pendingOpen?.tender.tender_id ?? null}
+            onReplace={answerReplace}
+          />
+        )}
 
         {route === 'tender' && ownTender && (
           <Workspace
@@ -153,6 +213,8 @@ export default function App() {
             <SampleGate failed={sampleStatus === 'error'} onRetry={() => setSampleStatus('idle')} />
           ))}
       </main>
+      <SiteFooter />
+      <CursorFollower />
     </div>
   );
 }

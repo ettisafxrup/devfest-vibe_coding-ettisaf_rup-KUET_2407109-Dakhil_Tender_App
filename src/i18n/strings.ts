@@ -1,6 +1,6 @@
 export const en = {
   "app.name": "Dakhil",
-  "app.title": "Dakhil: Our Tender package builder",
+  "app.title": "Dakhil: Our Tender Document Package Builder",
   "app.tagline": "Tender package builder",
   "app.skip": "Skip to content",
   "app.privacy": "Your files stay in this browser. Nothing is uploaded.",
@@ -26,7 +26,8 @@ export const en = {
   "start.step2": "Add your PDF files and match them",
   "start.step3": "Download one checked, ordered package",
   "start.drop": "Drop requirements.json here",
-  "start.dropHint": "You can drop your PDF files together with it.",
+  "start.dropHint":
+    "You can also drop the whole tender folder, PDF files included.",
   "start.choose": "Choose requirements.json",
   "start.sample": "Try with the sample tender",
   "start.loading": "Opening…",
@@ -63,6 +64,8 @@ export const en = {
   "row.hint.expiryNeeded": "Enter the expiry date printed on this document.",
   "row.hint.expired":
     "This expires before the submission deadline ({date}). Use a renewed copy.",
+  "row.hint.optional":
+    "This document is optional, so you can also remove the file.",
 
   "status.missing": "Missing",
   "status.expiryNeeded": "Expiry date needed",
@@ -88,7 +91,8 @@ export const en = {
   "reject.notPdf": "{file} is not a PDF. Only PDF files can be added.",
   "reject.damaged": "{file} is damaged and could not be opened.",
   "reject.locked":
-    "{file} is password-protected. Remove the password and add it again.",
+    "{file} is password-protected or locked. Save an unlocked copy and add it again.",
+  "reject.unreadable": "{file} could not be read. Please add it again.",
   "reject.tooMany": "{file} was not added. You can add up to 30 files.",
   "reject.tooLarge":
     "{file} was not added. All files together must be under 50 MB.",
@@ -108,6 +112,15 @@ export const en = {
     "The package could not be built because {file} could not be read. Remove it and add a fresh copy.",
   "bar.errorGeneric": "The package could not be built. Please try again.",
   "bar.more": "+{n} more",
+  "bar.optionalOnly": "No documents are required for this tender.",
+
+  "start.replace":
+    "Opening {id} will replace your current tender ({current}) and its files.",
+  "start.replaceYes": "Replace it",
+  "error.title": "Something went wrong.",
+  "error.body":
+    "Your files never left this browser. Reload the page to start again.",
+  "error.reload": "Reload the page",
 } as const
 
 export type StringKey = keyof typeof en
@@ -141,7 +154,8 @@ export const bn: Record<StringKey, string> = {
   "start.step2": "PDF ফাইল যোগ করে মিলিয়ে দিন",
   "start.step3": "যাচাই করা, সাজানো একটি প্যাকেজ ডাউনলোড করুন",
   "start.drop": "requirements.json এখানে ছেড়ে দিন",
-  "start.dropHint": "চাইলে PDF ফাইলগুলোও একসাথে ছেড়ে দিতে পারেন।",
+  "start.dropHint":
+    "চাইলে PDF ফাইলসহ পুরো টেন্ডার ফোল্ডারটিই ছেড়ে দিতে পারেন।",
   "start.choose": "requirements.json বাছুন",
   "start.sample": "নমুনা টেন্ডার দিয়ে দেখুন",
   "start.loading": "খোলা হচ্ছে…",
@@ -177,6 +191,7 @@ export const bn: Record<StringKey, string> = {
   "row.hint.expiryNeeded": "কাগজে লেখা মেয়াদ শেষের তারিখটি দিন।",
   "row.hint.expired":
     "দাখিলের শেষ তারিখের ({date}) আগেই এর মেয়াদ শেষ। নবায়ন করা কপি দিন।",
+  "row.hint.optional": "এই কাগজটি ঐচ্ছিক, তাই চাইলে ফাইলটি সরিয়েও দিতে পারেন।",
 
   "status.missing": "নেই",
   "status.expiryNeeded": "মেয়াদের তারিখ দিন",
@@ -202,7 +217,8 @@ export const bn: Record<StringKey, string> = {
   "reject.notPdf": "{file} PDF নয়। শুধু PDF ফাইল যোগ করা যায়।",
   "reject.damaged": "{file} নষ্ট, খোলা যায়নি।",
   "reject.locked":
-    "{file} পাসওয়ার্ড দিয়ে সুরক্ষিত। পাসওয়ার্ড সরিয়ে আবার যোগ করুন।",
+    "{file} পাসওয়ার্ড দিয়ে সুরক্ষিত বা লক করা। লক ছাড়া একটি কপি সেভ করে আবার যোগ করুন।",
+  "reject.unreadable": "{file} পড়া যায়নি। আবার যোগ করুন।",
   "reject.tooMany": "{file} যোগ হয়নি। সর্বোচ্চ 30টি ফাইল যোগ করা যায়।",
   "reject.tooLarge": "{file} যোগ হয়নি। সব ফাইল মিলিয়ে 50 MB-এর কম হতে হবে।",
   "notice.duplicate":
@@ -221,4 +237,13 @@ export const bn: Record<StringKey, string> = {
     "{file} পড়া যায়নি, তাই প্যাকেজ তৈরি হয়নি। ফাইলটি সরিয়ে নতুন কপি যোগ করুন।",
   "bar.errorGeneric": "প্যাকেজ তৈরি করা যায়নি। আবার চেষ্টা করুন।",
   "bar.more": "আরও {n}টি",
+  "bar.optionalOnly": "এই টেন্ডারে কোনো কাগজ আবশ্যিক নয়।",
+
+  "start.replace":
+    "{id} খুললে আপনার বর্তমান টেন্ডার ({current}) ও তার ফাইলগুলো সরে যাবে।",
+  "start.replaceYes": "বদলে ফেলুন",
+  "error.title": "কিছু একটা সমস্যা হয়েছে।",
+  "error.body":
+    "আপনার ফাইল এই ব্রাউজারের বাইরে কোথাও যায়নি। নতুন করে শুরু করতে পেজটি আবার লোড করুন।",
+  "error.reload": "পেজ আবার লোড করুন",
 }

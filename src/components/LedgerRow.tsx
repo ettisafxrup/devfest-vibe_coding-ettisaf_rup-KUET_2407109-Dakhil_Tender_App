@@ -55,6 +55,8 @@ export function LedgerRow({ row, project }: Props) {
       : status === 'expired'
         ? t('row.hint.expired', { date: formatDate(project.tender?.submission_deadline ?? '') })
         : null;
+  // An optional document can also be resolved by leaving it out.
+  const wayOut = hint && !requirement.mandatory ? ` ${t('row.hint.optional')}` : '';
 
   return (
     <li
@@ -115,7 +117,7 @@ export function LedgerRow({ row, project }: Props) {
           )}
         </div>
 
-        {hint && <p className={`row__hint row__hint--${status}`}>{hint}</p>}
+        {hint && <p className={`row__hint row__hint--${status}`}>{hint + wayOut}</p>}
       </div>
 
       <div className="row__side">

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useReducer, useRef } from 'react';
-import { MAX_FILES, MAX_TOTAL_BYTES, readPdf } from '../lib/files';
+import { MAX_FILES, MAX_TOTAL_BYTES, newId, readPdf } from '../lib/files';
 import { buildRows } from '../lib/status';
 import type { PendingFile, Rejection, Requirement, Tender, UploadedFile } from '../types';
 
@@ -9,7 +9,7 @@ export interface DuplicateNotice {
   requirement: Requirement;
 }
 
-interface State {
+export interface State {
   tender: Tender | null;
   requirements: Requirement[];
   files: UploadedFile[];
@@ -22,7 +22,7 @@ interface State {
   notice: DuplicateNotice | null;
 }
 
-type Action =
+export type Action =
   | { type: 'load'; tender: Tender; requirements: Requirement[] }
   | { type: 'pending'; items: PendingFile[] }
   | { type: 'settled'; pendingId: string; file: UploadedFile | null; rejection: Rejection | null }
@@ -34,7 +34,7 @@ type Action =
   | { type: 'notice'; notice: DuplicateNotice | null }
   | { type: 'reset' };
 
-const initial: State = {
+export const initialState: State = {
   tender: null,
   requirements: [],
   files: [],
@@ -48,20 +48,32 @@ const initial: State = {
 const without = <T,>(record: Record<string, T>, drop: (key: string, value: T) => boolean) =>
   Object.fromEntries(Object.entries(record).filter(([key, value]) => !drop(key, value)));
 
-function reducer(state: State, action: Action): State {
+export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'load':
-      return { ...initial, tender: action.tender, requirements: action.requirements };
+      return { ...initialState, tender: action.tender, requirements: action.requirements };
     case 'pending':
       return { ...state, pending: [...state.pending, ...action.items] };
     case 'settled': {
       // A reset while files were still being read drops the stragglers.
       if (!state.pending.some((p) => p.id === action.pendingId)) return state;
+      const pending = state.pending.filter((p) => p.id !== action.pendingId);
+      let { file, rejection } = action;
+      // The limits are enforced here, against the real list, so overlapping uploads cannot slip past them.
+      if (file) {
+        const used = state.files.reduce((sum, f) => sum + f.size, 0);
+        const reason =
+          state.files.length >= MAX_FILES ? 'tooMany' : used + file.size > MAX_TOTAL_BYTES ? 'tooLarge' : null;
+        if (reason) {
+          rejection = { id: action.pendingId, name: file.name, reason };
+          file = null;
+        }
+      }
       return {
         ...state,
-        pending: state.pending.filter((p) => p.id !== action.pendingId),
-        files: action.file ? [...state.files, action.file] : state.files,
-        rejections: action.rejection ? [...state.rejections, action.rejection] : state.rejections,
+        pending,
+        files: file ? [...state.files, file] : state.files,
+        rejections: rejection ? [...state.rejections, rejection] : state.rejections,
       };
     }
     case 'removeFile':
@@ -74,7 +86,12 @@ function reducer(state: State, action: Action): State {
       };
     case 'dismissRejection':
       return { ...state, rejections: state.rejections.filter((r) => r.id !== action.id) };
-    case 'match':
+    case 'match': {
+      // Ignore anything stale (a file removed mid-drag) or against the duplicate rule.
+      const known =
+        state.files.some((f) => f.id === action.fileId) &&
+        state.requirements.some((r) => r.id === action.requirementId);
+      if (!known || findDuplicateConflict(state, action.fileId, action.requirementId)) return state;
       return {
         ...state,
         matches: {
@@ -83,6 +100,7 @@ function reducer(state: State, action: Action): State {
         },
         notice: null,
       };
+    }
     case 'unmatch':
       return {
         ...state,
@@ -94,12 +112,12 @@ function reducer(state: State, action: Action): State {
     case 'notice':
       return { ...state, notice: action.notice };
     case 'reset':
-      return initial;
+      return initialState;
   }
 }
 
 /** If an identical copy of this file is already used for a different document, says where. */
-function findDuplicateConflict(state: State, fileId: string, requirementId: string): DuplicateNotice | null {
+export function findDuplicateConflict(state: State, fileId: string, requirementId: string): DuplicateNotice | null {
   const file = state.files.find((f) => f.id === fileId);
   if (!file) return null;
   for (const requirement of state.requirements) {
@@ -111,7 +129,7 @@ function findDuplicateConflict(state: State, fileId: string, requirementId: stri
 }
 
 export function useProject() {
-  const [state, dispatch] = useReducer(reducer, initial);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const latest = useRef(state);
   latest.current = state;
 
@@ -143,24 +161,21 @@ export function useProject() {
 
   const addFiles = useCallback(async (incoming: File[]) => {
     if (incoming.length === 0) return;
-    const pending = incoming.map((file) => ({ id: crypto.randomUUID(), name: file.name }));
+    const pending = incoming.map((file) => ({ id: newId(), name: file.name }));
     dispatch({ type: 'pending', items: pending });
 
-    let count = latest.current.files.length;
-    let bytes = latest.current.files.reduce((sum, f) => sum + f.size, 0);
     for (let i = 0; i < incoming.length; i++) {
       const source = incoming[i];
       const { id } = pending[i];
-      const result = await readPdf(source);
       let file: UploadedFile | null = null;
       let rejection: Rejection | null = null;
-      if (!result.ok) rejection = { id, name: source.name, reason: result.reason };
-      else if (count >= MAX_FILES) rejection = { id, name: source.name, reason: 'tooMany' };
-      else if (bytes + source.size > MAX_TOTAL_BYTES) rejection = { id, name: source.name, reason: 'tooLarge' };
-      else {
-        file = result.file;
-        count += 1;
-        bytes += source.size;
+      try {
+        const result = await readPdf(source);
+        if (result.ok) file = result.file;
+        else rejection = { id, name: source.name, reason: result.reason };
+      } catch {
+        // Whatever went wrong, the file must not be left "Reading…" forever.
+        rejection = { id, name: source.name, reason: 'unreadable' };
       }
       dispatch({ type: 'settled', pendingId: id, file, rejection });
     }

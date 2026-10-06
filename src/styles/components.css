@@ -116,6 +116,10 @@
   padding: 2px var(--s2);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-tag);
+  max-width: 28ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .segmented {
@@ -385,7 +389,94 @@
 .start__title {
   font: var(--text-display);
   letter-spacing: -0.02em;
-  text-wrap: balance;
+}
+
+/* ---------- Typed headline ---------- */
+
+/* The invisible full text holds the space; the typed text is laid over it. */
+.typed {
+  display: grid;
+}
+.typed__ghost,
+.typed__live {
+  grid-area: 1 / 1;
+}
+.typed__ghost {
+  visibility: hidden;
+}
+
+.typed__caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 3px;
+  background: var(--seal);
+  vertical-align: -0.1em;
+}
+.typed__caret--idle {
+  animation: caret 1.1s steps(1) 3 forwards;
+}
+
+@keyframes caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Cursor follower ---------- */
+
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--base);
+  will-change: transform;
+}
+.cursor--visible {
+  opacity: 1;
+}
+.cursor::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: -14px;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--seal);
+  border-radius: 50%;
+  opacity: 0.45;
+  transition: transform var(--base) var(--ease), opacity var(--base), background var(--base);
+}
+.cursor--hover::before {
+  transform: scale(1.55);
+  opacity: 0.7;
+  background: rgba(36, 56, 156, 0.07);
+}
+.cursor--down::before {
+  transform: scale(0.7);
+  opacity: 0.9;
+  background: rgba(36, 56, 156, 0.16);
+}
+
+.confirm {
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4);
+  font-size: 0.9375rem;
+}
+.confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
 }
 
 .start__lead {
@@ -735,7 +826,9 @@
   container-type: inline-size;
   position: sticky;
   top: calc(var(--topbar-h) + var(--s4));
-  max-height: calc(100dvh - var(--topbar-h) - 140px);
+  /* Fills the space between the top bar and the action bar, however tall that bar gets. */
+  max-height: calc(100dvh - var(--topbar-h) - var(--actionbar-h, 108px) - var(--s6));
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -753,6 +846,13 @@
 }
 .tray__messages:not(:empty) {
   margin-top: var(--s3);
+}
+/* Many rejected files must never push the file list out of the panel. */
+.tray__messages {
+  flex: none;
+  max-height: 168px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .tray__empty {
@@ -1143,4 +1243,134 @@
   .actionbar__actions > .btn {
     flex: 1;
   }
+}
+
+/* ---------- Click burst ---------- */
+
+.click-burst {
+  position: fixed;
+  z-index: 41;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  animation: burst-life 520ms linear forwards;
+}
+.click-burst::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--seal);
+  border-radius: 50%;
+  animation: burst-ring 480ms var(--ease) forwards;
+}
+.click-burst i {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--seal);
+  transform: rotate(var(--angle)) translateX(4px);
+  animation: burst-spark 460ms var(--ease) forwards;
+}
+
+@keyframes burst-life {
+  to {
+    visibility: hidden;
+  }
+}
+@keyframes burst-ring {
+  from {
+    transform: scale(0.4);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+@keyframes burst-spark {
+  from {
+    transform: rotate(var(--angle)) translateX(4px) scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: rotate(var(--angle)) translateX(22px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ---------- First-load fade ---------- */
+
+/* Each block of a page eases in, one after another. "backwards" leaves nothing behind afterwards. */
+.start > *,
+.workspace > *,
+.workspace__grid > * {
+  animation: appear 520ms var(--ease) backwards;
+}
+.start > :nth-child(2),
+.workspace > :nth-child(2) {
+  animation-delay: 70ms;
+}
+.start > :nth-child(3),
+.workspace > :nth-child(3),
+.workspace__grid > :nth-child(1) {
+  animation-delay: 140ms;
+}
+.start > :nth-child(4),
+.workspace__grid > :nth-child(2) {
+  animation-delay: 210ms;
+}
+.start > :nth-child(n + 5) {
+  animation-delay: 280ms;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------- Site footer ---------- */
+
+.site-footer {
+  padding: var(--s3) var(--gutter);
+  border-top: 1px solid var(--line);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+  text-align: center;
+}
+.site-footer span[aria-hidden] {
+  margin: 0 var(--s1);
+  color: var(--line-strong);
+}
+.site-footer a {
+  color: var(--ink-2);
+  font-weight: 500;
+  text-underline-offset: 3px;
+}
+.site-footer a:hover {
+  color: var(--seal);
+}
+
+/* ---------- Language cross-fade ---------- */
+
+/* Everything that carries words fades out, the language changes, then it fades back. */
+.app__main,
+.nav,
+.brand__name,
+.site-footer {
+  transition: opacity 150ms ease;
+}
+.lang-fading .app__main,
+.lang-fading .nav,
+.lang-fading .brand__name,
+.lang-fading .site-footer {
+  opacity: 0;
 }
