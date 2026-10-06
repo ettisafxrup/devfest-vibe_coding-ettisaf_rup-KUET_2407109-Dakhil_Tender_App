@@ -37,6 +37,7 @@ The generated PDF follows Section 6:
 Also included:
 
 - Three pages at clean URLs: home (`/`), your tender (`/tender`) and a built-in sample tender (`/sample`).
+- Light and dark themes, switched from the top bar and remembered between visits; the first visit follows the system setting.
 - **Quick select** on the sample page fills every required document with its correct file and expiry date in one click.
 - Drop a whole tender folder on the home page: `requirements.json` and the PDFs inside it load together.
 - Opening a second tender over loaded files asks first, and the browser warns before a tab with loaded files is closed.

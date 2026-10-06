@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { flushSync } from 'react-dom';
+import { Backdrop } from './components/Backdrop';
 import { CursorFollower } from './components/CursorFollower';
 import { SampleGate } from './components/SampleGate';
 import { SiteFooter } from './components/SiteFooter';
@@ -181,6 +182,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <Backdrop />
       <a className="skip-link" href="#main" onClick={skipToMain}>
         {t('app.skip')}
       </a>

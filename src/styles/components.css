@@ -176,13 +176,13 @@
 .btn--primary {
   height: 44px;
   padding: 0 var(--s5);
-  background: var(--seal);
-  color: #fff;
+  background: var(--seal-solid);
+  color: var(--on-seal);
   font-size: 0.9375rem;
   font-weight: 600;
 }
 .btn--primary:hover:not(:disabled) {
-  background: var(--seal-hover);
+  background: var(--seal-solid-hover);
 }
 .btn--primary:disabled {
   background: var(--sunken);
@@ -253,7 +253,7 @@
 .select {
   appearance: none;
   padding-right: var(--s6);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%235C584F' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: var(--chevron);
   background-repeat: no-repeat;
   background-position: right 10px center;
   text-overflow: ellipsis;
@@ -459,12 +459,12 @@
 .cursor--hover::before {
   transform: scale(1.55);
   opacity: 0.7;
-  background: rgba(36, 56, 156, 0.07);
+  background: var(--seal-wash);
 }
 .cursor--down::before {
   transform: scale(0.7);
   opacity: 0.9;
-  background: rgba(36, 56, 156, 0.16);
+  background: var(--seal-wash);
 }
 
 .confirm {
@@ -901,7 +901,7 @@
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-sheet);
-  box-shadow: 0 1px 2px rgba(27, 26, 23, 0.08);
+  box-shadow: var(--shadow-sheet);
   font: 500 0.5625rem/1 var(--font-mono);
   color: var(--ink-3);
 }
@@ -1340,10 +1340,11 @@
 
 .site-footer {
   padding: var(--s3) var(--gutter);
-  border-top: 1px solid var(--line);
+  background: var(--footer);
+  border-top: 1px solid var(--line-strong);
   font-size: 0.75rem;
   line-height: 1.5;
-  color: var(--ink-3);
+  color: var(--ink-2);
   text-align: center;
 }
 .site-footer span[aria-hidden] {
@@ -1402,39 +1403,111 @@
   }
 }
 
-/* ---------- Page background ---------- */
+/* ---------- Page backdrop ---------- */
 
 /*
- * Ledger paper: a faint dot grid, with two large "checked" seals pressed into
- * opposite corners. It sits on a fixed layer behind everything, so it never
- * scrolls, never repeats and never takes pointer events.
+ * Three thin wave lines drifting slowly along the bottom of the window, on a
+ * fixed layer behind everything. Only transforms are animated, so it costs
+ * almost nothing, and it is still when the user asks for reduced motion.
  */
-body::before {
-  content: '';
+.backdrop {
   position: fixed;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
   pointer-events: none;
-  background:
-    url('/bg-seal.svg') no-repeat right -300px top -240px / 640px 640px,
-    url('/bg-seal.svg') no-repeat left -280px bottom -290px / 600px 600px,
-    radial-gradient(circle at center, rgba(27, 26, 23, 0.085) 1px, transparent 1.3px) 0 0 / 22px 22px,
-    var(--paper);
+  background: var(--paper);
+  color: var(--seal);
+}
+.backdrop__wave {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  height: 220px;
+  fill: none;
+  stroke: currentColor;
+  will-change: transform;
+  animation: drift linear infinite;
+}
+.backdrop__wave--a {
+  bottom: 6vh;
+  opacity: 0.16;
+  stroke-width: 1.4;
+  animation-duration: 46s;
+}
+.backdrop__wave--b {
+  bottom: 13vh;
+  opacity: 0.1;
+  stroke-width: 1.2;
+  animation-duration: 68s;
+  animation-direction: reverse;
+}
+.backdrop__wave--c {
+  bottom: -2vh;
+  opacity: 0.07;
+  fill: currentColor;
+  stroke: none;
+  animation-duration: 90s;
+}
+@keyframes drift {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@media (max-width: 719px) {
+  .backdrop__wave {
+    width: 400%;
+    height: 150px;
+  }
 }
 
 /* The bars stay solid so content scrolling under them never shows through. */
 .topbar {
-  background: rgba(246, 244, 239, 0.94);
+  background: var(--paper);
 }
 
-@media (max-width: 719px) {
-  body::before {
-    background:
-      url('/bg-seal.svg') no-repeat right -210px top -200px / 380px 380px,
-      url('/bg-seal.svg') no-repeat left -200px bottom -210px / 360px 360px,
-      radial-gradient(circle at center, rgba(27, 26, 23, 0.085) 1px, transparent 1.3px) 0 0 / 20px 20px,
-      var(--paper);
-  }
+/* ---------- Theme toggle ---------- */
+
+.theme-toggle {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sunken);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background var(--fast), color var(--fast), transform var(--base) var(--ease);
+}
+.theme-toggle:hover {
+  color: var(--ink);
+  transform: rotate(18deg);
+}
+
+/* A change of theme eases across instead of snapping. */
+.theme-fading,
+.theme-fading *,
+.theme-fading *::before,
+.theme-fading *::after {
+  transition: background-color 260ms ease, border-color 260ms ease, color 260ms ease, fill 260ms ease, stroke 260ms ease !important;
+}
+
+/* ---------- Cursor trail ---------- */
+
+.cursor-trail {
+  position: fixed;
+  left: -3px;
+  top: -3px;
+  z-index: 39;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--seal);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
 }
 
 /* ---------- Sample intro: note + quick select ---------- */
@@ -1448,4 +1521,137 @@ body::before {
 }
 .workspace__intro .workspace__note {
   flex: 1 1 320px;
+}
+
+/* ---------- Calmer checklist rows and file cards ---------- */
+
+/* One tidy header line: title on the left, page range then status on the right. */
+.row {
+  align-items: start;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.row__side {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 24px;
+}
+.row__pages {
+  order: -1;
+}
+.row__title {
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.row__meta {
+  padding: 1px 6px;
+  border-radius: var(--r-tag);
+  background: var(--sunken);
+  color: var(--ink-2);
+}
+
+/* The expiry label sits beside its field, so matched rows keep one even line of controls. */
+.field--beside {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s2);
+}
+.row__controls .field--beside {
+  flex: 0 0 auto;
+}
+.field--beside .input {
+  width: 158px;
+}
+.field--beside .field__label {
+  white-space: nowrap;
+}
+
+/* An empty slot reads as a quiet prompt, not a filled-in grey box. */
+.select--empty {
+  background-color: transparent;
+  color: var(--ink-3);
+}
+.select--empty:hover {
+  background-color: var(--sunken);
+  color: var(--ink);
+}
+
+/* PDF icon: rounded sheet, folded corner, small label. */
+.pdf-icon {
+  flex: none;
+  --i-fill: var(--surface);
+  --i-stroke: var(--line-strong);
+  --i-label: var(--ink-3);
+  transition: transform var(--base) var(--ease);
+}
+.pdf-icon__sheet {
+  fill: var(--i-fill);
+  stroke: var(--i-stroke);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.pdf-icon__fold {
+  fill: none;
+  stroke: var(--i-stroke);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pdf-icon__label {
+  fill: var(--i-label);
+}
+.pdf-icon__text {
+  fill: var(--surface);
+  font: 700 6.4px/1 var(--font-mono);
+  letter-spacing: 0.04em;
+}
+.file--unplaced .pdf-icon {
+  --i-fill: var(--seal-tint);
+  --i-stroke: var(--seal);
+  --i-label: var(--seal-solid);
+}
+.file--unplaced .pdf-icon__text {
+  fill: var(--on-seal);
+}
+.file--pending .pdf-icon {
+  --i-fill: var(--sunken);
+  --i-label: var(--line-strong);
+}
+.file:hover .pdf-icon {
+  transform: translateY(-2px) rotate(-3deg);
+}
+.file__name {
+  font-weight: 500;
+}
+.file {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+@container (min-width: 430px) {
+  .pdf-icon {
+    grid-area: sheet;
+  }
+}
+
+@media (max-width: 719px) {
+  .row__side {
+    justify-content: flex-start;
+  }
+  .row__side:empty {
+    display: none;
+  }
+  .field--beside {
+    flex: 1 1 100%;
+  }
+  .field--beside .input {
+    flex: 1;
+    width: auto;
+  }
+}
+
+/* The black heart would vanish on the dark footer, so it is flipped to white there. */
+:root[data-theme='dark'] .site-footer span[aria-label] {
+  filter: invert(1) brightness(1.6);
 }

@@ -4,6 +4,7 @@ import { titleOf } from '../lib/status';
 import type { Project } from '../state/useProject';
 import type { UploadedFile } from '../types';
 import { Icon } from './Icon';
+import { PdfIcon } from './PdfIcon';
 import { Select, type SelectOption } from './Select';
 
 export function FileCard({ file, project }: { file: UploadedFile; project: Project }) {
@@ -12,7 +13,7 @@ export function FileCard({ file, project }: { file: UploadedFile; project: Proje
   const twin = project.duplicateOf.get(file.id);
 
   const options: SelectOption[] = [
-    { value: '', label: t('file.notUsed') },
+    { value: '', label: usedFor ? t('file.notUsed') : t('file.choose') },
     ...project.requirements.map((requirement) => {
       const blocked = project.duplicateConflict(file.id, requirement.id) !== null;
       const label = `${requirement.order}. ${titleOf(requirement, lang)}`;
@@ -34,16 +35,13 @@ export function FileCard({ file, project }: { file: UploadedFile; project: Proje
       }}
     >
       <div className="file__head">
-        <span className="file__sheet" aria-hidden="true">
-          PDF
-        </span>
+        <PdfIcon />
         <div className="file__text">
           <p className="file__name" title={file.name}>
             {file.name}
           </p>
           <p className="file__meta">
             {file.pages === 1 ? t('file.pages.one') : t('file.pages.many', { n: file.pages })}
-            {!usedFor && <span className="file__unplaced"> · {t('file.unplaced')}</span>}
           </p>
         </div>
         <button

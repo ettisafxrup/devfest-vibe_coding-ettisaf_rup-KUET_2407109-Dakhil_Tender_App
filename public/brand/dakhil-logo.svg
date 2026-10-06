@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 40" role="img" aria-label="Dakhil">
   <g transform="translate(4 4)">
-    <rect width="32" height="32" rx="7.5" fill="#24389C"/>
+    <rect width="32" height="32" rx="7.5" fill="#1D3F8F"/>
     <path d="M10.2 6.2h8.1l5.5 5.5v12.1a1.8 1.8 0 0 1-1.8 1.8H10.2a1.8 1.8 0 0 1-1.8-1.8V8a1.8 1.8 0 0 1 1.8-1.8Z" fill="#fff"/>
-    <path d="M18.3 6.2v3.7a1.8 1.8 0 0 0 1.8 1.8h3.7Z" fill="#B9C2EA"/>
-    <path d="m12 17.6 2.9 2.9 5.3-6.1" fill="none" stroke="#24389C" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18.3 6.2v3.7a1.8 1.8 0 0 0 1.8 1.8h3.7Z" fill="#C7D2F2"/>
+    <path d="m12 17.6 2.9 2.9 5.3-6.1" fill="none" stroke="#1D3F8F" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <text x="46" y="27.5" font-family="'Instrument Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="-0.4" fill="#1B1A17">Dakhil</text>
+  <text x="46" y="27.5" font-family="'Instrument Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="-0.4" fill="#16181D">Dakhil</text>
 </svg>

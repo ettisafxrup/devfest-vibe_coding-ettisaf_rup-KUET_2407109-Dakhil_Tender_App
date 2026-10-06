@@ -8,7 +8,7 @@ const glyphs: Record<Status, JSX.Element> = {
   expired: (
     <>
       <circle cx="7" cy="7" r="5.3" fill="currentColor" />
-      <path d="M4.6 4.6l4.8 4.8M9.4 4.6 4.6 9.4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M4.6 4.6l4.8 4.8M9.4 4.6 4.6 9.4" stroke="var(--danger-tint)" strokeWidth="1.5" strokeLinecap="round" />
     </>
   ),
   expiryNeeded: (
@@ -28,9 +28,8 @@ interface Props {
 
 export function StatusTag({ status, prompt }: Props) {
   const { t } = useI18n();
-  if (prompt && status === 'missing') {
-    return <span className="status status--prompt">{t('status.select')}</span>;
-  }
+  // Before anything is matched, an empty slot's own "Choose a file…" is prompt enough.
+  if (prompt && status === 'missing') return null;
   return (
     <span className={`status status--${status}`}>
       <svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true" focusable="false">

@@ -1,7 +1,9 @@
 import { useI18n } from '../i18n';
 import type { StringKey } from '../i18n/strings';
 import { hrefOf, type Route } from '../lib/router';
+import { useTheme } from '../state/useTheme';
 import type { Lang } from '../types';
+import { Icon } from './Icon';
 import { Logo } from './Logo';
 
 const LANGUAGES: { code: Lang; label: string }[] = [
@@ -32,6 +34,17 @@ function LanguageToggle() {
         </button>
       ))}
     </div>
+  );
+}
+
+function ThemeToggle() {
+  const { t } = useI18n();
+  const { theme, toggle } = useTheme();
+  const label = t(theme === 'dark' ? 'theme.toLight' : 'theme.toDark');
+  return (
+    <button type="button" className="theme-toggle" aria-label={label} title={label} onClick={toggle}>
+      <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
+    </button>
   );
 }
 
@@ -69,6 +82,7 @@ export function TopBar({ route, tenderId, hasOwnTender }: Props) {
 
         <div className="topbar__end">
           {tenderId && <span className="topbar__tender mono">{tenderId}</span>}
+          <ThemeToggle />
           <LanguageToggle />
         </div>
       </div>

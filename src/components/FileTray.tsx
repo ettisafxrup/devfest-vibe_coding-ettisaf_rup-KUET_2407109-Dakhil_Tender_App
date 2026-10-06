@@ -4,6 +4,7 @@ import type { Project } from '../state/useProject';
 import { DropZone } from './DropZone';
 import { FileCard } from './FileCard';
 import { Icon } from './Icon';
+import { PdfIcon } from './PdfIcon';
 
 /** Every uploaded file, unplaced ones first, plus anything that was turned away. */
 export function FileTray({ project }: { project: Project }) {
@@ -72,7 +73,7 @@ export function FileTray({ project }: { project: Project }) {
           {pending.map((item) => (
             <li key={item.id} className="file file--pending" aria-busy="true">
               <div className="file__head">
-                <span className="file__sheet" aria-hidden="true" />
+                <PdfIcon blank />
                 <div className="file__text">
                   <p className="file__name">{item.name}</p>
                   <p className="file__meta">{t('tray.reading')}</p>

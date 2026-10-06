@@ -94,7 +94,7 @@ a {
   z-index: 30;
   padding: var(--s2) var(--s3);
   background: var(--ink);
-  color: #fff;
+  color: var(--paper);
   border-radius: var(--r-control);
   text-decoration: none;
 }

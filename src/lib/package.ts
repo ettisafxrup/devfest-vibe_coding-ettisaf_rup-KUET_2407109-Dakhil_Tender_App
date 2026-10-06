@@ -59,11 +59,11 @@ const MARGIN = 64;
 const FOOTER_SIZE = 9;
 const BAND_RATIO = 28 / FOOTER_SIZE;
 
-const INK = rgb(0.106, 0.102, 0.09);
-const INK_2 = rgb(0.361, 0.345, 0.31);
+const INK = rgb(0.086, 0.094, 0.114);
+const INK_2 = rgb(0.306, 0.318, 0.349);
 const RULE = rgb(0.812, 0.788, 0.737);
 const SUNKEN = rgb(0.937, 0.925, 0.898);
-const SEAL = rgb(0.141, 0.22, 0.612);
+const SEAL = rgb(0.114, 0.247, 0.561);
 
 export const packageFileName = (tender: Tender): string =>
   `${tender.tender_id.replace(/[\\/:*?"<>|]/g, '_')}_Package.pdf`;

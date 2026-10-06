@@ -20,7 +20,8 @@ export function LedgerRow({ row, project }: Props) {
   const title = titleOf(requirement, lang);
 
   const options: SelectOption[] = [
-    { value: '', label: t('row.noFile') },
+    // Empty, the first choice is the prompt; filled, it is the way to clear the slot.
+    { value: '', label: file ? t('row.clear') : t('row.noFile') },
     ...project.files.map((candidate) => {
       const usedFor = project.placement.get(candidate.id);
       const blocked = project.duplicateConflict(candidate.id, requirement.id) !== null;
@@ -74,7 +75,8 @@ export function LedgerRow({ row, project }: Props) {
       <div className="row__main">
         <div className="row__head">
           <h3 className="row__title">{title}</h3>
-          <span className="row__meta">{t(requirement.mandatory ? 'row.required' : 'row.optional')}</span>
+          {/* Most documents are required, so only the exceptions are labelled. */}
+          {!requirement.mandatory && <span className="row__meta">{t('row.optional')}</span>}
         </div>
 
         <div className="row__controls">
@@ -104,7 +106,7 @@ export function LedgerRow({ row, project }: Props) {
           </div>
 
           {requirement.has_expiry && file && (
-            <label className="field">
+            <label className="field field--beside">
               <span className="field__label">{t('row.expiry')}</span>
               <input
                 type="date"

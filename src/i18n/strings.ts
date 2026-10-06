@@ -5,6 +5,8 @@ export const en = {
   "app.skip": "Skip to content",
   "app.privacy": "Your files stay in this browser. Nothing is uploaded.",
   "lang.label": "Language",
+  "theme.toDark": "Switch to dark mode",
+  "theme.toLight": "Switch to light mode",
   "nav.label": "Main",
   "nav.home": "Home",
   "nav.tender": "Your tender",
@@ -16,7 +18,6 @@ export const en = {
   "sample.note":
     "This is the contest sample pack. Some of its files have problems on purpose. Match each file to its document and see what the checklist catches.",
   "sample.quick": "Quick select",
-  "status.select": "Select a file",
   "bar.begin":
     "Choose a file for each required document. Anything that needs fixing will be listed here.",
 
@@ -52,10 +53,10 @@ export const en = {
 
   "ledger.title": "Required documents",
   "ledger.hint": "In the order they will appear in the package.",
-  "row.required": "Required",
   "row.optional": "Optional",
   "row.fileFor": "File for {doc}",
-  "row.noFile": "No file chosen",
+  "row.noFile": "Choose a file…",
+  "row.clear": "No file",
   "row.inUse": "used for {doc}",
   "row.sameContentUsed": "same content already used",
   "row.unmatch": "Remove file from {doc}",
@@ -82,9 +83,9 @@ export const en = {
   "tray.limits": "PDF only · up to 30 files · 50 MB in total",
   "file.pages.one": "1 page",
   "file.pages.many": "{n} pages",
-  "file.unplaced": "Not used yet",
   "file.useFor": "Use this file for",
   "file.notUsed": "Not used",
+  "file.choose": "Use for…",
   "file.remove": "Remove {file}",
   "file.duplicate": "Same content as {file}",
   "file.drag": "Drag onto a document, or choose below.",
@@ -134,6 +135,8 @@ export const bn: Record<StringKey, string> = {
   "app.privacy":
     "আপনার ফাইল ব্রাউজারেই থাকে। কোন ফাইল কোথাও কোন সার্ভারে আপলোড হয় না।",
   "lang.label": "ভাষা",
+  "theme.toDark": "ডার্ক মোড চালু করুন",
+  "theme.toLight": "লাইট মোড চালু করুন",
   "nav.label": "মেইন মেনু",
   "nav.home": "হোম",
   "nav.tender": "আপনার টেন্ডার",
@@ -145,7 +148,6 @@ export const bn: Record<StringKey, string> = {
   "sample.note":
     "এআই ডেভফেস্ট ভাইবকোডিং কম্পিটিশানের জন্য এই অ্যাপ। ডেমো টেন্ডার এর ডেটার কয়েকটি ফাইলে ইচ্ছে করেই সমস্যা রাখা আছে। প্রতিটি ফাইল তার কাগজের সাথে মিলিয়ে দেখুন তো, তালিকায় কী ধরা পড়ে?!",
   "sample.quick": "কুইক সিলেক্ট",
-  "status.select": "ফাইল সিলেক্ট করুন",
   "bar.begin":
     "প্রতিটি ম্যান্ডেটরি কাগজের জন্য একটি ফাইল সিলেক্ট করুন। কিছু ঠিক করার থাকলে এখানে দেখা যাবে।",
 
@@ -180,10 +182,10 @@ export const bn: Record<StringKey, string> = {
 
   "ledger.title": "প্রয়োজনীয় কাগজপত্র",
   "ledger.hint": "প্যাকেজে যে ক্রমে থাকবে সেই ক্রমে।",
-  "row.required": "আবশ্যিক",
   "row.optional": "ঐচ্ছিক",
   "row.fileFor": "{doc}-এর ফাইল",
-  "row.noFile": "কোনো ফাইল বাছা হয়নি",
+  "row.noFile": "ফাইল বাছুন…",
+  "row.clear": "কোনো ফাইল নয়",
   "row.inUse": "{doc}-এ ব্যবহৃত",
   "row.sameContentUsed": "একই ফাইল আগেই ব্যবহৃত",
   "row.unmatch": "{doc} থেকে ফাইল সরান",
@@ -209,9 +211,9 @@ export const bn: Record<StringKey, string> = {
   "tray.limits": "শুধু PDF · সর্বোচ্চ 30টি ফাইল · মোট 50 MB",
   "file.pages.one": "1 পৃষ্ঠা",
   "file.pages.many": "{n} পৃষ্ঠা",
-  "file.unplaced": "এখনও ব্যবহার হয়নি",
   "file.useFor": "এই ফাইলটি যে কাগজের জন্য",
   "file.notUsed": "ব্যবহার হচ্ছে না",
+  "file.choose": "যে কাগজের জন্য…",
   "file.remove": "{file} সরান",
   "file.duplicate": "{file}-এর হুবহু নকল",
   "file.drag": "কাগজের সারিতে টেনে আনুন, অথবা নিচ থেকে বাছুন।",
