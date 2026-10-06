@@ -2,7 +2,7 @@
   <img src="public/brand/dakhil-mark.svg" alt="Dakhil logo" width="96" height="96" />
 </p>
 
-<h1 align="center">Dakhil</h1>
+<h1 align="center">Dakhil | দাখিল</h1>
 
 <p align="center">
   <strong>Our Tender Document Package Builder</strong><br />
