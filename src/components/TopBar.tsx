@@ -2,6 +2,7 @@ import { useI18n } from '../i18n';
 import type { StringKey } from '../i18n/strings';
 import { hrefOf, type Route } from '../lib/router';
 import type { Lang } from '../types';
+import { Logo } from './Logo';
 
 const LANGUAGES: { code: Lang; label: string }[] = [
   { code: 'en', label: 'EN' },
@@ -50,7 +51,7 @@ export function TopBar({ route, tenderId, hasOwnTender }: Props) {
     <header className="topbar">
       <div className="topbar__inner">
         <a className="brand" href={hrefOf('home')} aria-label={`${t('app.name')}, ${t('nav.home')}`}>
-          <span className="brand__mark" aria-hidden="true" />
+          <Logo />
           <span className="brand__name">{t('app.name')}</span>
         </a>
 

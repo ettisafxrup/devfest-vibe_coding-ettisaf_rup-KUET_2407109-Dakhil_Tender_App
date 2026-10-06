@@ -10,7 +10,7 @@ import { useI18n } from './i18n';
 import { carriesDesktopFiles, collectDroppedFiles } from './lib/dnd';
 import { RequirementsError, parseRequirements } from './lib/requirements';
 import { handleLinkClick, navigate, useRoute } from './lib/router';
-import { loadSamplePack } from './lib/sample';
+import { SAMPLE_ANSWERS, loadSamplePack } from './lib/sample';
 import { useProject } from './state/useProject';
 import type { Requirement, Tender } from './types';
 
@@ -162,6 +162,16 @@ export default function App() {
     };
   }, [route, ownTender, sampleTender, addOwnFiles, addSampleFiles, openTender]);
 
+  /** Sample page only: put the right file on every required document, dates included. */
+  const quickSelect = () => {
+    for (const answer of SAMPLE_ANSWERS) {
+      const file = sample.files.find((candidate) => candidate.name === answer.fileName);
+      if (!file) continue; // the visitor removed it; leave that document for them
+      sample.match(answer.requirementId, file.id);
+      if (answer.expiry) sample.setExpiry(file.id, answer.expiry);
+    }
+  };
+
   const skipToMain = (event: MouseEvent) => {
     event.preventDefault();
     main.current?.focus();
@@ -204,6 +214,7 @@ export default function App() {
               project={sample}
               tender={sampleTender}
               note={t('sample.note')}
+              onQuickSelect={quickSelect}
               onReset={() => {
                 navigate('home');
                 resetSample();

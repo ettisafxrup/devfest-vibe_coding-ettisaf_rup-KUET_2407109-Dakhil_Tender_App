@@ -34,7 +34,7 @@
 
 .brand {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--s2);
   min-width: 0;
   padding: var(--s1) 0;
@@ -1373,4 +1373,79 @@
 .lang-fading .brand__name,
 .lang-fading .site-footer {
   opacity: 0;
+}
+
+/* ---------- Logo ---------- */
+
+.brand__logo {
+  flex: none;
+  border-radius: 6px;
+  transition: transform var(--base) var(--ease);
+}
+.brand:hover .brand__logo {
+  transform: rotate(-6deg) scale(1.06);
+}
+/* The check draws itself once when the page loads. */
+.brand__check {
+  stroke-dasharray: 13;
+  stroke-dashoffset: 13;
+  animation: draw-check 520ms 260ms var(--ease) forwards;
+}
+@keyframes draw-check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand__check {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- Page background ---------- */
+
+/*
+ * Ledger paper: a faint dot grid, with two large "checked" seals pressed into
+ * opposite corners. It sits on a fixed layer behind everything, so it never
+ * scrolls, never repeats and never takes pointer events.
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    url('/bg-seal.svg') no-repeat right -300px top -240px / 640px 640px,
+    url('/bg-seal.svg') no-repeat left -280px bottom -290px / 600px 600px,
+    radial-gradient(circle at center, rgba(27, 26, 23, 0.085) 1px, transparent 1.3px) 0 0 / 22px 22px,
+    var(--paper);
+}
+
+/* The bars stay solid so content scrolling under them never shows through. */
+.topbar {
+  background: rgba(246, 244, 239, 0.94);
+}
+
+@media (max-width: 719px) {
+  body::before {
+    background:
+      url('/bg-seal.svg') no-repeat right -210px top -200px / 380px 380px,
+      url('/bg-seal.svg') no-repeat left -200px bottom -210px / 360px 360px,
+      radial-gradient(circle at center, rgba(27, 26, 23, 0.085) 1px, transparent 1.3px) 0 0 / 20px 20px,
+      var(--paper);
+  }
+}
+
+/* ---------- Sample intro: note + quick select ---------- */
+
+.workspace__intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s5);
+}
+.workspace__intro .workspace__note {
+  flex: 1 1 320px;
 }

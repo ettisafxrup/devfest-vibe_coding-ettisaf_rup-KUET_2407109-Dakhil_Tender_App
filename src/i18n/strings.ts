@@ -15,6 +15,7 @@ export const en = {
   "sample.home": "Back to home",
   "sample.note":
     "This is the contest sample pack. Some of its files have problems on purpose. Match each file to its document and see what the checklist catches.",
+  "sample.quick": "Quick select",
   "status.select": "Select a file",
   "bar.begin":
     "Choose a file for each required document. Anything that needs fixing will be listed here.",
@@ -143,6 +144,7 @@ export const bn: Record<StringKey, string> = {
   "sample.home": "হোমে ফিরুন",
   "sample.note":
     "এআই ডেভফেস্ট ভাইবকোডিং কম্পিটিশানের জন্য এই অ্যাপ। ডেমো টেন্ডার এর ডেটার কয়েকটি ফাইলে ইচ্ছে করেই সমস্যা রাখা আছে। প্রতিটি ফাইল তার কাগজের সাথে মিলিয়ে দেখুন তো, তালিকায় কী ধরা পড়ে?!",
+  "sample.quick": "কুইক সিলেক্ট",
   "status.select": "ফাইল সিলেক্ট করুন",
   "bar.begin":
     "প্রতিটি ম্যান্ডেটরি কাগজের জন্য একটি ফাইল সিলেক্ট করুন। কিছু ঠিক করার থাকলে এখানে দেখা যাবে।",

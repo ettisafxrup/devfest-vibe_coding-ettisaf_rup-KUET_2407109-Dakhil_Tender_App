@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <path id="ring" d="M300 300m-236 0a236 236 0 1 1 472 0a236 236 0 1 1-472 0"/>
+  </defs>
+  <g fill="none" stroke="#24389C" opacity="0.075">
+    <circle cx="300" cy="300" r="290" stroke-width="2.5"/>
+    <circle cx="300" cy="300" r="276" stroke-width="1" stroke-dasharray="2 7"/>
+    <circle cx="300" cy="300" r="208" stroke-width="1.5"/>
+    <circle cx="300" cy="300" r="150" stroke-width="1" stroke-dasharray="1 9"/>
+    <path d="m236 304 44 44 86-98" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text fill="#24389C" opacity="0.085" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="25" font-weight="700" textLength="1474" lengthAdjust="spacing">
+    <textPath href="#ring" textLength="1474" lengthAdjust="spacing">DAKHIL  ·  TENDER PACKAGE  ·  CHECKED  ·  IN ORDER  ·  READY TO SUBMIT  ·</textPath>
+  </text>
+</svg>

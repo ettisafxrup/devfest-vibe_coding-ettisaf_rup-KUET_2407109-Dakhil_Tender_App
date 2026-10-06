@@ -30,13 +30,16 @@ All nine main tasks from the problem statement:
 
 The generated PDF follows Section 6:
 
-- **Cover page** in English with tender ID, title, procuring entity, bidder, deadline, date prepared and the included documents in order.
+- **Cover page** in English, laid out as a formal submission: tender ID, title, procuring entity, bidder, deadline, date prepared, and a schedule of the included documents in order with their page ranges. It carries a faint "ETTISAF RUP DEVFEST" watermark.
 - **Documents** in tender order, all pages, skipping optional documents with no file.
-- **Footer** `<tender_id> | Page X of Y` on every page. Each page is scaled slightly to open a blank band at the bottom, so the footer never covers content, including on rotated pages.
+- **Footer** `<tender_id> | Page X of Y` on every page. Each page is scaled slightly to open a blank band at the bottom, so the footer never covers content, including on rotated, cropped and very small pages. Filled-in form fields are flattened so their values stay visible.
 
 Also included:
 
-- Three routes: home (`#/`), your tender (`#/tender`) and a built-in sample tender (`#/sample`).
+- Three pages at clean URLs: home (`/`), your tender (`/tender`) and a built-in sample tender (`/sample`).
+- **Quick select** on the sample page fills every required document with its correct file and expiry date in one click.
+- Drop a whole tender folder on the home page: `requirements.json` and the PDFs inside it load together.
+- Opening a second tender over loaded files asks first, and the browser warns before a tab with loaded files is closed.
 - Responsive layout down to 360px, keyboard-accessible controls, and a live page range on every checklist row.
 
 ## Bonus features completed
@@ -54,7 +57,10 @@ No other bonus task is implemented.
 - The PDF cover is English only. Characters outside Latin-1 in tender fields are printed as `?`.
 - The expiry date field uses the browser's own date format.
 - Removing a file has no undo.
-- Tested with automated runs in headless Microsoft Edge (Chromium). The password-protected path was not tested with a real encrypted file.
+- Tested with `npm test` (42 checks on the rules and the generated PDF) and automated runs in headless Microsoft Edge (Chromium), not in Chrome itself. The password-protected check uses a hand-built encrypted file, not one saved by a real PDF tool.
+- The "SAMPLE" watermark seen inside the sample documents is printed in the contest's own PDFs. The app copies document pages unchanged and does not alter it.
+- The built-in sample page loads the pack's ten PDFs only; its PNG logo is left out so the page does not open with an error. Adding a non-PDF yourself still shows the rejection.
+- Clean URLs need the host to serve `index.html` for unknown paths. `public/_redirects` does this on Netlify; other hosts need their own rule.
 - The Bangla text has not been reviewed by a second reader.
 
 ## How to run locally
@@ -66,6 +72,7 @@ npm install
 npm run dev        # development server
 npm run build      # type-check and production build into dist/
 npm run preview    # serve the production build
+npm test           # rule and PDF checks
 ```
 
 To try it, open the sample tender from the home page, or load `sample-pack/requirements.json` and the PDFs in `sample-pack/documents/`.
