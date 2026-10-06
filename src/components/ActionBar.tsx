@@ -55,7 +55,7 @@ export function ActionBar({ tender, rows, pristine }: Props) {
           {state.phase === 'done' ? (
             <p className="actionbar__headline actionbar__headline--ok">
               <Icon name="check" />
-              {t('bar.done', { pages: state.pages })}
+              {state.pages === 1 ? t('bar.doneOne') : t('bar.done', { pages: state.pages })}
             </p>
           ) : (
             <p className="actionbar__headline">
@@ -94,7 +94,7 @@ export function ActionBar({ tender, rows, pristine }: Props) {
           ) : state.phase === 'done' ? (
             <p className="actionbar__detail mono">{state.fileName}</p>
           ) : (
-            <p className="actionbar__detail">{t('bar.clear', { pages })}</p>
+            <p className="actionbar__detail">{pages === 1 ? t('bar.clearOne') : t('bar.clear', { pages })}</p>
           )}
         </div>
 

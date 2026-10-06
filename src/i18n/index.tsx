@@ -33,6 +33,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(storedLang);
   const [choice, setChoice] = useState<Lang>(lang);
   const fade = useRef(0);
+  const chosen = useRef(lang);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -40,6 +41,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
+    if (next === chosen.current) return;
+    chosen.current = next;
     setChoice(next);
     try {
       localStorage.setItem(STORAGE_KEY, next);

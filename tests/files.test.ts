@@ -109,6 +109,14 @@ describe('project state', () => {
     expect(match(state, 'R1', 'a2').matches).toEqual({ R1: 'a2' }); // swapping within the same document is fine
     expect(findDuplicateConflict(state, 'c', 'R2')).toBeNull();
   });
+  it('assigns a whole set at once, whatever was matched before', () => {
+    let state = loaded([file('a', 'same'), file('a2', 'same'), file('c')]);
+    state = match(state, 'R2', 'a2'); // the twin sits on another document
+    state = match(state, 'R3', 'c');
+    state = reducer(state, { type: 'assign', pairs: [{ requirementId: 'R1', fileId: 'a', expiry: '2027-01-01' }, { requirementId: 'R2', fileId: 'c' }] });
+    expect(state.matches).toEqual({ R1: 'a', R2: 'c' });
+    expect(state.expiry).toEqual({ a: '2027-01-01' });
+  });
   it('ignores matches to files or documents that do not exist', () => {
     const state = loaded([file('a')]);
     expect(match(state, 'R1', 'ghost')).toBe(state);

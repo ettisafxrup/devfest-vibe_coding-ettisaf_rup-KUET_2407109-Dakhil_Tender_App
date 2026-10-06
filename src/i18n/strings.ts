@@ -108,6 +108,8 @@ export const en = {
   "bar.generate": "Generate package",
   "bar.building": "Building page {page} of {total}…",
   "bar.done": "Package ready · {pages} pages",
+  "bar.doneOne": "Package ready · 1 page",
+  "bar.clearOne": "Everything is in order. The package will have 1 page.",
   "bar.download": "Download",
   "bar.preview": "Open preview",
   "bar.error":
@@ -235,6 +237,8 @@ export const bn: Record<StringKey, string> = {
   "bar.generate": "প্যাকেজ তৈরি করুন",
   "bar.building": "{total} পৃষ্ঠার মধ্যে {page} নম্বর তৈরি হচ্ছে…",
   "bar.done": "প্যাকেজ প্রস্তুত · {pages} পৃষ্ঠা",
+  "bar.doneOne": "প্যাকেজ প্রস্তুত · 1 পৃষ্ঠা",
+  "bar.clearOne": "সব ঠিক আছে। প্যাকেজে 1 পৃষ্ঠা থাকবে।",
   "bar.download": "ডাউনলোড",
   "bar.preview": "প্রিভিউ খুলুন",
   "bar.error":

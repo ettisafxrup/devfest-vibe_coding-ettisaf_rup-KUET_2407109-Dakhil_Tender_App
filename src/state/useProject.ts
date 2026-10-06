@@ -9,6 +9,12 @@ export interface DuplicateNotice {
   requirement: Requirement;
 }
 
+export interface Assignment {
+  requirementId: string;
+  fileId: string;
+  expiry?: string;
+}
+
 export interface State {
   tender: Tender | null;
   requirements: Requirement[];
@@ -30,6 +36,7 @@ export type Action =
   | { type: 'dismissRejection'; id: string }
   | { type: 'match'; requirementId: string; fileId: string }
   | { type: 'unmatch'; requirementId: string }
+  | { type: 'assign'; pairs: Assignment[] }
   | { type: 'expiry'; fileId: string; date: string }
   | { type: 'notice'; notice: DuplicateNotice | null }
   | { type: 'reset' };
@@ -100,6 +107,15 @@ export function reducer(state: State, action: Action): State {
         },
         notice: null,
       };
+    }
+    case 'assign': {
+      // Starts from no matches at all, so nothing chosen earlier can block or outlive the new set.
+      let next: State = { ...state, matches: {}, notice: null };
+      for (const pair of action.pairs) {
+        next = reducer(next, { type: 'match', requirementId: pair.requirementId, fileId: pair.fileId });
+        if (pair.expiry) next = reducer(next, { type: 'expiry', fileId: pair.fileId, date: pair.expiry });
+      }
+      return next;
     }
     case 'unmatch':
       return {
@@ -192,6 +208,7 @@ export function useProject() {
     else dispatch({ type: 'match', requirementId, fileId });
   }, []);
 
+  const assign = useCallback((pairs: Assignment[]) => dispatch({ type: 'assign', pairs }), []);
   const unmatch = useCallback((requirementId: string) => dispatch({ type: 'unmatch', requirementId }), []);
   const removeFile = useCallback((fileId: string) => dispatch({ type: 'removeFile', fileId }), []);
   const setExpiry = useCallback((fileId: string, date: string) => dispatch({ type: 'expiry', fileId, date }), []);
@@ -206,6 +223,7 @@ export function useProject() {
     addFiles,
     duplicateConflict,
     match,
+    assign,
     unmatch,
     removeFile,
     setExpiry,

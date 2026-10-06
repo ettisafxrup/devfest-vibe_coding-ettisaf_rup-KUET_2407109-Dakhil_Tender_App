@@ -128,6 +128,15 @@ describe('the generated package (problem statement, section 6)', () => {
     expect(packageFileName(odd)).toBe('টেন্ডার_2026_04_17_Package.pdf');
   });
 
+  it('prints long dates and tender ids on the cover in full', async () => {
+    const wordy: Tender = { ...tender, tender_id: 'DGHS/ICT/2026-27/GD-014 (Re-tender) Lot 3 of 7 - Supply, Installation and Commissioning', submission_deadline: '2026-09-30' };
+    const doc = await open(await buildPackage(wordy, []));
+    const cover = pageText(doc, doc.getPage(0));
+    expect(cover).toContain('30 September 2026 (2026-09-30)');
+    expect(cover).toContain(`Tender No. ${wordy.tender_id}`);
+    expect(footerOf(doc, doc.getPage(0))).toBe(`${wordy.tender_id} | Page 1 of 1`);
+  });
+
   it('names the file that could not be read', async () => {
     const good = await upload('good.pdf', await labelled('G'));
     const bad: UploadedFile = { ...good, id: 'bad', name: 'bad.pdf', bytes: new TextEncoder().encode('%PDF-1.7 broken') };

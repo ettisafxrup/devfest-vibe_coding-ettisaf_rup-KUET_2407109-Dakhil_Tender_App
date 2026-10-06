@@ -165,12 +165,13 @@ export default function App() {
 
   /** Sample page only: put the right file on every required document, dates included. */
   const quickSelect = () => {
-    for (const answer of SAMPLE_ANSWERS) {
-      const file = sample.files.find((candidate) => candidate.name === answer.fileName);
-      if (!file) continue; // the visitor removed it; leave that document for them
-      sample.match(answer.requirementId, file.id);
-      if (answer.expiry) sample.setExpiry(file.id, answer.expiry);
-    }
+    sample.assign(
+      SAMPLE_ANSWERS.flatMap(({ requirementId, fileName, expiry }) => {
+        const file = sample.files.find((candidate) => candidate.name === fileName);
+        // A file the visitor removed is skipped; that document is left for them.
+        return file ? [{ requirementId, fileId: file.id, expiry }] : [];
+      }),
+    );
   };
 
   const skipToMain = (event: MouseEvent) => {

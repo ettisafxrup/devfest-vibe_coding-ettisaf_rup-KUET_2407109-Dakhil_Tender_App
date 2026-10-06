@@ -93,6 +93,12 @@ function safe(font: PDFFont, value: string): string {
   }).join('');
 }
 
+/** The largest size up to `size` at which the whole value fits the width (never below 5pt). */
+function sizeToFit(font: PDFFont, value: string, size: number, maxWidth: number): number {
+  const width = font.widthOfTextAtSize(value, size);
+  return width <= maxWidth ? size : Math.max(5, (size * maxWidth) / width);
+}
+
 function fit(font: PDFFont, value: string, size: number, maxWidth: number): string {
   if (font.widthOfTextAtSize(value, size) <= maxWidth) return value;
   let cut = value;
@@ -369,7 +375,8 @@ function drawCover(
     y += 12 * k;
     rule(y, W / 2 - 36, W / 2 + 36, 1.2, SEAL);
     y -= 22 * k;
-    centered(fit(sans, `Tender No. ${tenderId}`, 11.5 * k, contentWidth), y, 11.5 * k, sans, INK_2);
+    const tenderLine = `Tender No. ${tenderId}`;
+    centered(tenderLine, y, sizeToFit(sans, tenderLine, 11.5 * k, contentWidth), sans, INK_2);
 
     // Who it goes to, and who it comes from.
     y -= 40 * k;
@@ -387,11 +394,14 @@ function drawCover(
 
     // Key facts in a ruled strip.
     rule(y, MARGIN, W - MARGIN, 0.6, INK);
-    const cell = contentWidth / facts.length;
+    // The two dates need more room than the page count ("30 September 2026 (2026-09-30)").
+    const shares = [0.375, 0.375, 0.25];
+    let cellX = MARGIN;
     facts.forEach(([label, value], index) => {
-      const x = MARGIN + index * cell;
-      tracked(label, x, y - 16 * k, 7.5, INK_2, 'left');
-      text(fit(sans, value, 10.5 * k, cell - 10), x, y - 31 * k, 10.5 * k, sans);
+      const cell = contentWidth * shares[index];
+      tracked(label, cellX, y - 16 * k, 7.5, INK_2, 'left');
+      text(value, cellX, y - 31 * k, sizeToFit(sans, value, 10.5 * k, cell - 10), sans);
+      cellX += cell;
     });
     y -= 42 * k;
     rule(y, MARGIN, W - MARGIN, 0.6, INK);
