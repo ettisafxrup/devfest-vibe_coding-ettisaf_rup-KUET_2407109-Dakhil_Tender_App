@@ -40,7 +40,9 @@ export function ActionBar({ tender, rows }: { tender: Tender; rows: Row[] }) {
           )}
 
           {state.phase === 'error' ? (
-            <p className="actionbar__detail actionbar__detail--error">{t('bar.error', { file: state.fileName })}</p>
+            <p className="actionbar__detail actionbar__detail--error" role="alert">
+              {state.fileName ? t('bar.error', { file: state.fileName }) : t('bar.errorGeneric')}
+            </p>
           ) : blockers.length > 0 ? (
             <div className="actionbar__detail">
               <span>{t('bar.fix')}</span>
@@ -53,6 +55,12 @@ export function ActionBar({ tender, rows }: { tender: Tender; rows: Row[] }) {
                     </button>
                   </li>
                 ))}
+                {/* Small screens show only the next blocker plus this count (see CSS). */}
+                {blockers.length > 1 && (
+                  <li className="blockers__more" aria-hidden="true">
+                    {t('bar.more', { n: blockers.length - 1 })}
+                  </li>
+                )}
               </ul>
             </div>
           ) : state.phase === 'done' ? (

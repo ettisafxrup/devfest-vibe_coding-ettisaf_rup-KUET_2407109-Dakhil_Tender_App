@@ -9,7 +9,7 @@
   /* Ink */
   --ink: #1b1a17;
   --ink-2: #5c584f;
-  --ink-3: #7a756b;
+  --ink-3: #6b665d; /* dark enough for small text on paper and sunken, not just white */
 
   /* The one accent: rubber-stamp blue */
   --seal: #24389c;

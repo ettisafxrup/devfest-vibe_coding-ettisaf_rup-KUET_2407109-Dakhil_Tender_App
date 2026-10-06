@@ -349,10 +349,11 @@
   text-wrap: pretty;
 }
 
+/* A plain numbered list, like instructions on a form. */
 .steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
   margin-top: var(--s5);
   padding-top: var(--s5);
   border-top: 1px solid var(--line);
@@ -360,9 +361,9 @@
 
 .steps__item {
   display: flex;
-  flex-direction: column;
-  gap: var(--s2);
-  font: var(--text-small);
+  align-items: baseline;
+  gap: var(--s3);
+  font-size: 0.875rem;
   color: var(--ink-2);
 }
 
@@ -546,7 +547,6 @@
 .row__hint {
   font: var(--text-small);
 }
-.row__hint--missing,
 .row__hint--expired {
   color: var(--danger);
 }
@@ -835,6 +835,11 @@
   color: var(--warn);
 }
 
+.blockers__more {
+  display: none;
+  color: var(--ink-2);
+}
+
 .actionbar__actions {
   flex: none;
   display: flex;
@@ -878,14 +883,6 @@
   }
   .start__title {
     font-size: 1.625rem;
-  }
-  .steps {
-    grid-template-columns: 1fr;
-    gap: var(--s3);
-  }
-  .steps__item {
-    flex-direction: row;
-    gap: var(--s3);
   }
   .workspace {
     padding-top: var(--s5);
@@ -936,6 +933,13 @@
     flex-direction: column;
     align-items: stretch;
     gap: var(--s3);
+  }
+  /* A long blocker list would bury the page under the sticky bar. */
+  .blockers li:nth-child(n + 2):not(.blockers__more) {
+    display: none;
+  }
+  .blockers__more {
+    display: block;
   }
   .actionbar__actions > .btn {
     flex: 1;

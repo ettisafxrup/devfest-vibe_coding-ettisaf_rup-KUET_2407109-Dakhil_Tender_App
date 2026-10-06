@@ -45,7 +45,12 @@ export function DropZone({ title, hint, buttonLabel, accept, onFiles, size = 'co
       <p className="dropzone__title">{title}</p>
       {hint && <p className="dropzone__hint">{hint}</p>}
       <div className="dropzone__actions">
-        <button type="button" className="btn btn--secondary" disabled={busy} onClick={() => input.current?.click()}>
+        <button
+          type="button"
+          className={cx('btn', size === 'large' ? 'btn--primary' : 'btn--secondary')}
+          disabled={busy}
+          onClick={() => input.current?.click()}
+        >
           <Icon name="upload" />
           {buttonLabel}
         </button>

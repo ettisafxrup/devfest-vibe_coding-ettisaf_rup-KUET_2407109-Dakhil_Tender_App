@@ -48,14 +48,13 @@ export function LedgerRow({ row, project }: Props) {
     project.match(requirement.id, fileId);
   };
 
+  // "Missing" needs no extra sentence: the tag and the empty slot already say it.
   const hint =
-    status === 'missing'
-      ? t('row.hint.missing')
-      : status === 'expiryNeeded'
-        ? t('row.hint.expiryNeeded')
-        : status === 'expired'
-          ? t('row.hint.expired', { date: formatDate(project.tender?.submission_deadline ?? '') })
-          : null;
+    status === 'expiryNeeded'
+      ? t('row.hint.expiryNeeded')
+      : status === 'expired'
+        ? t('row.hint.expired', { date: formatDate(project.tender?.submission_deadline ?? '') })
+        : null;
 
   return (
     <li
@@ -91,7 +90,11 @@ export function LedgerRow({ row, project }: Props) {
                 className="icon-btn"
                 aria-label={t('row.unmatch', { doc: title })}
                 title={t('row.unmatch', { doc: title })}
-                onClick={() => project.unmatch(requirement.id)}
+                onClick={(event) => {
+                  // This button disappears with the match; keep keyboard focus in the row.
+                  event.currentTarget.parentElement?.querySelector('select')?.focus();
+                  project.unmatch(requirement.id);
+                }}
               >
                 <Icon name="close" />
               </button>

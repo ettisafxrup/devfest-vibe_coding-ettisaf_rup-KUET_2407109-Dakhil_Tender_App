@@ -13,11 +13,15 @@ export function FileCard({ file, project }: { file: UploadedFile; project: Proje
 
   const options: SelectOption[] = [
     { value: '', label: t('file.notUsed') },
-    ...project.requirements.map((requirement) => ({
-      value: requirement.id,
-      label: `${requirement.order}. ${titleOf(requirement, lang)}`,
-      disabled: project.duplicateConflict(file.id, requirement.id) !== null,
-    })),
+    ...project.requirements.map((requirement) => {
+      const blocked = project.duplicateConflict(file.id, requirement.id) !== null;
+      const label = `${requirement.order}. ${titleOf(requirement, lang)}`;
+      return {
+        value: requirement.id,
+        label: blocked ? `${label} (${t('row.sameContentUsed')})` : label,
+        disabled: blocked,
+      };
+    }),
   ];
 
   return (

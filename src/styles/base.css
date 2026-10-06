@@ -12,6 +12,11 @@ html {
 /* Bangla glyphs are shorter and need more leading than Latin at the same size. */
 html:lang(bn) {
   font-size: 106.25%;
+  --text-display: 600 1.875rem/1.4 var(--font-ui);
+  --text-title: 600 1.375rem/1.45 var(--font-ui);
+  --text-heading: 600 1.0625rem/1.6 var(--font-ui);
+  --text-body: 400 0.9375rem/1.6 var(--font-ui);
+  --text-small: 400 0.8125rem/1.6 var(--font-ui);
 }
 html:lang(bn) body {
   line-height: 1.6;

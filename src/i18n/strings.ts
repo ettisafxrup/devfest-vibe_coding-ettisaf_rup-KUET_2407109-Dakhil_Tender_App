@@ -1,5 +1,6 @@
 export const en = {
   'app.name': 'Dakhil',
+  'app.title': 'Dakhil: Our Tender package builder',
   'app.tagline': 'Tender package builder',
   'app.skip': 'Skip to content',
   'app.privacy': 'Your files stay in this browser. Nothing is uploaded.',
@@ -13,7 +14,7 @@ export const en = {
   'start.step3': 'Download one checked, ordered package',
   'start.drop': 'Drop requirements.json here',
   'start.dropHint': 'You can drop your PDF files together with it.',
-  'start.choose': 'Choose file',
+  'start.choose': 'Choose requirements.json',
   'start.sample': 'Try with the sample tender',
   'start.loading': 'Opening…',
   'start.err.json': 'This file could not be read. Please choose the requirements.json file from the tender pack.',
@@ -42,7 +43,6 @@ export const en = {
   'row.expiry': 'Expiry date',
   'row.page': 'p. {a}',
   'row.pages': 'pp. {a}–{b}',
-  'row.hint.missing': 'Choose the file for this document.',
   'row.hint.expiryNeeded': 'Enter the expiry date printed on this document.',
   'row.hint.expired': 'This expires before the submission deadline ({date}). Use a renewed copy.',
 
@@ -85,12 +85,15 @@ export const en = {
   'bar.download': 'Download',
   'bar.preview': 'Open preview',
   'bar.error': 'The package could not be built because {file} could not be read. Remove it and add a fresh copy.',
+  'bar.errorGeneric': 'The package could not be built. Please try again.',
+  'bar.more': '+{n} more',
 } as const;
 
 export type StringKey = keyof typeof en;
 
 export const bn: Record<StringKey, string> = {
   'app.name': 'দাখিল',
+  'app.title': 'দাখিল: আমাদের টেন্ডার প্যাকেজ তৈরির টুল',
   'app.tagline': 'টেন্ডার প্যাকেজ তৈরি',
   'app.skip': 'মূল অংশে যান',
   'app.privacy': 'আপনার ফাইল এই ব্রাউজারেই থাকে। কোথাও আপলোড হয় না।',
@@ -104,7 +107,7 @@ export const bn: Record<StringKey, string> = {
   'start.step3': 'যাচাই করা, সাজানো একটি প্যাকেজ ডাউনলোড করুন',
   'start.drop': 'requirements.json এখানে ছেড়ে দিন',
   'start.dropHint': 'চাইলে PDF ফাইলগুলোও একসাথে ছেড়ে দিতে পারেন।',
-  'start.choose': 'ফাইল বাছুন',
+  'start.choose': 'requirements.json বাছুন',
   'start.sample': 'নমুনা টেন্ডার দিয়ে দেখুন',
   'start.loading': 'খোলা হচ্ছে…',
   'start.err.json': 'ফাইলটি পড়া যায়নি। টেন্ডার প্যাকের requirements.json ফাইলটি বাছুন।',
@@ -133,7 +136,6 @@ export const bn: Record<StringKey, string> = {
   'row.expiry': 'মেয়াদ শেষের তারিখ',
   'row.page': 'পৃ. {a}',
   'row.pages': 'পৃ. {a}–{b}',
-  'row.hint.missing': 'এই কাগজের ফাইলটি বাছুন।',
   'row.hint.expiryNeeded': 'কাগজে লেখা মেয়াদ শেষের তারিখটি দিন।',
   'row.hint.expired': 'দাখিলের শেষ তারিখের ({date}) আগেই এর মেয়াদ শেষ। নবায়ন করা কপি দিন।',
 
@@ -176,4 +178,6 @@ export const bn: Record<StringKey, string> = {
   'bar.download': 'ডাউনলোড',
   'bar.preview': 'প্রিভিউ খুলুন',
   'bar.error': '{file} পড়া যায়নি, তাই প্যাকেজ তৈরি হয়নি। ফাইলটি সরিয়ে নতুন কপি যোগ করুন।',
+  'bar.errorGeneric': 'প্যাকেজ তৈরি করা যায়নি। আবার চেষ্টা করুন।',
+  'bar.more': 'আরও {n}টি',
 };
